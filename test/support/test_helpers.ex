@@ -11,4 +11,13 @@ defmodule MessagingGatewayWeb.TestHelpers do
     |> put_req_header("x-client-key", client_key)
     |> put_req_header("authorization", "Bearer " <> secret)
   end
+
+  @doc "POSTs JSON. Maps/lists are encoded; binaries are sent byte-for-byte."
+  def post_json(conn, path, body) do
+    raw = if is_binary(body), do: body, else: Jason.encode!(body)
+
+    conn
+    |> put_req_header("content-type", "application/json")
+    |> Phoenix.ConnTest.dispatch(MessagingGatewayWeb.Endpoint, :post, path, raw)
+  end
 end
