@@ -10,8 +10,9 @@ config :messaging_gateway, MessagingGateway.Repo,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
-  # Query logging is useful locally but can contain message content; never enable it in prod.
-  log: :debug
+  # Query logs print bound parameters (message text, recipients), so they stay off even in
+  # dev. Flip to `log: :debug` temporarily for local debugging only.
+  log: false
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
