@@ -53,6 +53,21 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
+  fetch_secret! = fn name ->
+    value = System.get_env(name)
+
+    if is_nil(value) or byte_size(value) < 32 do
+      raise "environment variable #{name} is missing or shorter than 32 bytes. " <>
+              "Generate one with: mix phx.gen.secret 48"
+    end
+
+    value
+  end
+
+  config :messaging_gateway,
+    webhook_secret: fetch_secret!.("WEBHOOK_SECRET"),
+    api_key_pepper: fetch_secret!.("API_KEY_PEPPER")
+
   host = System.get_env("PHX_HOST") || "example.com"
 
   config :messaging_gateway, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")

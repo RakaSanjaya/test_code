@@ -5,10 +5,13 @@ config :messaging_gateway, MessagingGateway.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
+  port: String.to_integer(System.get_env("DB_PORT", "55432")),
   database: "messaging_gateway_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  # Query logging is useful locally but can contain message content; never enable it in prod.
+  log: :debug
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -61,3 +64,9 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Development-only secrets. Production values come from WEBHOOK_SECRET / API_KEY_PEPPER
+# (see config/runtime.exs).
+config :messaging_gateway,
+  webhook_secret: "dev_webhook_secret_0123456789abcdef0123456789",
+  api_key_pepper: "dev_api_key_pepper_0123456789abcdef012345"

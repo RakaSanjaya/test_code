@@ -10,6 +10,7 @@ defmodule MessagingGateway.Application do
     children = [
       MessagingGatewayWeb.Telemetry,
       MessagingGateway.Repo,
+      {Oban, Application.fetch_env!(:messaging_gateway, Oban)},
       {DNSCluster, query: Application.get_env(:messaging_gateway, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MessagingGateway.PubSub},
       # Start a worker by calling: MessagingGateway.Worker.start_link(arg)

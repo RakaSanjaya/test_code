@@ -1,21 +1,26 @@
 defmodule MessagingGatewayWeb.ErrorJSON do
   @moduledoc """
-  This module is invoked by your endpoint in case of errors on JSON requests.
-
-  See config/config.exs.
+  Renders framework-level errors (no route, parse errors, crashes) in the API's
+  standard error envelope: `%{error: %{code: "...", message: "..."}}`.
   """
 
-  # If you want to customize a particular status code,
-  # you may add your own clauses, such as:
-  #
-  # def render("500.json", _assigns) do
-  #   %{errors: %{detail: "Internal Server Error"}}
-  # end
-
-  # By default, Phoenix returns the status message from
-  # the template name. For example, "404.json" becomes
-  # "Not Found".
   def render(template, _assigns) do
-    %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
+    %{
+      error: %{
+        code: code_from_template(template),
+        message: Phoenix.Controller.status_message_from_template(template)
+      }
+    }
+  end
+
+  defp code_from_template(template) do
+    with [status_text | _] <- String.split(template, "."),
+         {status, ""} <- Integer.parse(status_text) do
+      status |> Plug.Conn.Status.reason_atom() |> Atom.to_string()
+    else
+      _ -> "internal_server_error"
+    end
+  rescue
+    ArgumentError -> "internal_server_error"
   end
 end

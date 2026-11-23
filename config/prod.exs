@@ -5,6 +5,7 @@ import Config
 # Note `:force_ssl` is required to be set at compile-time.
 config :messaging_gateway, MessagingGatewayWeb.Endpoint,
   force_ssl: [
+    hsts: true,
     rewrite_on: [:x_forwarded_proto],
     exclude: [
       # paths: ["/health"],

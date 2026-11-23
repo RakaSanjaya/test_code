@@ -9,9 +9,10 @@ config :messaging_gateway, MessagingGateway.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
+  port: String.to_integer(System.get_env("DB_PORT", "55432")),
   database: "messaging_gateway_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
-  pool_size: System.schedulers_online() * 2
+  pool_size: 30
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
@@ -29,3 +30,10 @@ config :phoenix, :plug_init_mode, :runtime
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true
+
+config :messaging_gateway, Oban, testing: :manual
+
+config :messaging_gateway,
+  webhook_secret: "test_webhook_secret_0123456789abcdef0123",
+  api_key_pepper: "test_api_key_pepper_0123456789abcdef0123",
+  rate_limit: [limit: 10_000, window_ms: 60_000]

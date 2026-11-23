@@ -1,12 +1,16 @@
 defmodule MessagingGatewayWeb.ErrorJSONTest do
   use MessagingGatewayWeb.ConnCase, async: true
 
+  alias MessagingGatewayWeb.ErrorJSON
+
   test "renders 404" do
-    assert MessagingGatewayWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+    assert ErrorJSON.render("404.json", %{}) == %{
+             error: %{code: "not_found", message: "Not Found"}
+           }
   end
 
   test "renders 500" do
-    assert MessagingGatewayWeb.ErrorJSON.render("500.json", %{}) ==
-             %{errors: %{detail: "Internal Server Error"}}
+    assert ErrorJSON.render("500.json", %{}) ==
+             %{error: %{code: "internal_server_error", message: "Internal Server Error"}}
   end
 end
