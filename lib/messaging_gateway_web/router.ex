@@ -1,7 +1,7 @@
 defmodule MessagingGatewayWeb.Router do
   use MessagingGatewayWeb, :router
 
-  alias MessagingGatewayWeb.Plugs.{AuthenticateApiKey, VerifyWebhookSignature}
+  alias MessagingGatewayWeb.Plugs.{AuthenticateApiKey, RateLimit, VerifyWebhookSignature}
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -10,6 +10,7 @@ defmodule MessagingGatewayWeb.Router do
 
   pipeline :api_key_auth do
     plug AuthenticateApiKey
+    plug RateLimit
   end
 
   pipeline :vendor_webhook do

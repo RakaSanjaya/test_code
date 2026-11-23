@@ -13,6 +13,7 @@ defmodule MessagingGateway.Application do
       {Oban, Application.fetch_env!(:messaging_gateway, Oban)},
       {DNSCluster, query: Application.get_env(:messaging_gateway, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: MessagingGateway.PubSub},
+      MessagingGateway.RateLimiter,
       # Start a worker by calling: MessagingGateway.Worker.start_link(arg)
       # {MessagingGateway.Worker, arg},
       # Start to serve requests, typically the last entry
