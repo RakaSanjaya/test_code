@@ -19,8 +19,7 @@ config :messaging_gateway, MessagingGatewayWeb.Endpoint,
     formats: [json: MessagingGatewayWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: MessagingGateway.PubSub,
-  live_view: [signing_salt: "Bq0qelxt"]
+  pubsub_server: MessagingGateway.PubSub
 
 # Configure Elixir's Logger
 config :logger, :default_formatter,

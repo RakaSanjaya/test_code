@@ -28,3 +28,6 @@ messaging_gateway-*.tar
 
 # Local environment secrets
 .env
+
+# Local agent/tooling workspaces
+/.superpowers/

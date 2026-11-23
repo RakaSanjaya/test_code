@@ -22,8 +22,6 @@ defmodule MessagingGatewayWeb.ConnCase do
       # The default endpoint for testing
       @endpoint MessagingGatewayWeb.Endpoint
 
-      use MessagingGatewayWeb, :verified_routes
-
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
