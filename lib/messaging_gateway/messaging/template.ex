@@ -4,6 +4,7 @@ defmodule MessagingGateway.Messaging.Template do
 
   alias MessagingGateway.Accounts.Tenant
   alias MessagingGateway.Billing.Pricing
+  alias MessagingGateway.Messaging.TemplateMatcher
 
   @statuses ~w(approved pending rejected)
 
@@ -25,6 +26,11 @@ defmodule MessagingGateway.Messaging.Template do
     |> validate_format(:code, ~r/\A[a-z0-9_]{1,64}\z/)
     |> validate_inclusion(:category, Pricing.categories())
     |> validate_inclusion(:status, @statuses)
+    |> validate_change(:body_pattern, fn :body_pattern, pattern ->
+      if TemplateMatcher.valid_pattern?(pattern),
+        do: [],
+        else: [body_pattern: "must be at most 1024 bytes with at most 10 {{n}} placeholders"]
+    end)
     |> foreign_key_constraint(:tenant_id)
     |> unique_constraint([:tenant_id, :code])
     |> check_constraint(:category, name: :templates_category_valid)
