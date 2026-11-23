@@ -5,6 +5,8 @@ defmodule MessagingGatewayWeb.TestHelpers do
 
   import Plug.Conn
 
+  alias MessagingGateway.Webhooks.Signature
+
   @doc "Adds `x-client-key` and `authorization: Bearer <secret>`."
   def put_api_auth(conn, client_key, secret) do
     conn
@@ -26,7 +28,7 @@ defmodule MessagingGatewayWeb.TestHelpers do
 
     signature =
       Keyword.get_lazy(opts, :signature, fn ->
-        MessagingGateway.Webhooks.Signature.sign(secret, ts, raw_body)
+        Signature.sign(secret, ts, raw_body)
       end)
 
     conn

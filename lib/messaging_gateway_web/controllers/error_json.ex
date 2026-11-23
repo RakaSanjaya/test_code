@@ -4,6 +4,8 @@ defmodule MessagingGatewayWeb.ErrorJSON do
   standard error envelope: `%{error: %{code: "...", message: "..."}}`.
   """
 
+  alias Plug.Conn.Status
+
   def render(template, _assigns) do
     %{
       error: %{
@@ -16,7 +18,7 @@ defmodule MessagingGatewayWeb.ErrorJSON do
   defp code_from_template(template) do
     with [status_text | _] <- String.split(template, "."),
          {status, ""} <- Integer.parse(status_text) do
-      status |> Plug.Conn.Status.reason_atom() |> Atom.to_string()
+      status |> Status.reason_atom() |> Atom.to_string()
     else
       _ -> "internal_server_error"
     end

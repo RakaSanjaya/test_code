@@ -41,10 +41,17 @@ defmodule MessagingGateway.Messaging.TemplateMatcherTest do
   test "pathological input finishes fast" do
     pattern = Enum.map_join(1..10, " ", &"{{#{&1}}}") <> "!"
 
-    {us, false} =
-      :timer.tc(fn -> TemplateMatcher.matches?(pattern, String.duplicate("a ", 2048)) end)
+    text = String.duplicate("a ", 2048)
 
-    assert us < 50_000
+    # Best of 5 runs: the suite runs in parallel, so a single sample can include
+    # scheduler stalls unrelated to the algorithm (~100µs when measured alone).
+    timings =
+      for _ <- 1..5 do
+        {us, false} = :timer.tc(fn -> TemplateMatcher.matches?(pattern, text) end)
+        us
+      end
+
+    assert Enum.min(timings) < 50_000
   end
 
   test "valid_pattern?/1" do

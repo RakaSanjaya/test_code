@@ -27,19 +27,15 @@ defmodule MessagingGateway.ConcurrencyTest do
 
   # Every task waits at a barrier and is released at once for maximum contention.
   defp race(n, fun) do
-    tasks =
-      for i <- 1..n do
-        Task.async(fn ->
-          receive do
-            :go -> :ok
-          end
-
-          unboxed(fn -> fun.(i) end)
-        end)
-      end
-
+    tasks = for i <- 1..n, do: Task.async(fn -> run_at_barrier(fun, i) end)
     Enum.each(tasks, &send(&1.pid, :go))
     Task.await_many(tasks, 30_000)
+  end
+
+  defp run_at_barrier(fun, i) do
+    receive do
+      :go -> unboxed(fn -> fun.(i) end)
+    end
   end
 
   defp new_tenant(attrs) do

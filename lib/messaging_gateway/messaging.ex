@@ -180,18 +180,18 @@ defmodule MessagingGateway.Messaging do
     with %Message{} <- message || {:error, :not_found},
          :apply <- StatusMachine.check(message.status, status) do
       updated = update_status!(message, status, reason)
-
-      if status == "failed" do
-        case Billing.refund(message.tenant_id, message.id, message.cost) do
-          {:ok, _} -> {:updated, updated}
-          {:error, error} -> Repo.rollback(error)
-        end
-      else
-        {:updated, updated}
-      end
+      if status == "failed", do: refund!(message)
+      {:updated, updated}
     else
       :noop -> {:unchanged, message}
       :invalid -> Repo.rollback(:invalid_transition)
+      {:error, error} -> Repo.rollback(error)
+    end
+  end
+
+  defp refund!(message) do
+    case Billing.refund(message.tenant_id, message.id, message.cost) do
+      {:ok, _} -> :ok
       {:error, error} -> Repo.rollback(error)
     end
   end
