@@ -15,7 +15,8 @@ defmodule MessagingGatewayWeb.Endpoint do
     parsers: [:json],
     pass: [],
     json_decoder: Phoenix.json_library(),
-    length: 65_536
+    length: 65_536,
+    body_reader: {MessagingGatewayWeb.Plugs.CacheRawBody, :read_body, []}
 
   plug Plug.Head
   plug MessagingGatewayWeb.Router
