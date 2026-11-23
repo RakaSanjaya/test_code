@@ -24,6 +24,7 @@ defmodule MessagingGateway.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import MessagingGateway.DataCase
+      import MessagingGateway.Fixtures
     end
   end
 

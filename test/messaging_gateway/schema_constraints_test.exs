@@ -1,8 +1,6 @@
 defmodule MessagingGateway.SchemaConstraintsTest do
   use MessagingGateway.DataCase, async: true
 
-  import MessagingGateway.Fixtures
-
   alias MessagingGateway.Accounts.{ApiKey, Tenant}
   alias MessagingGateway.Billing.BalanceTransaction
   alias MessagingGateway.Messaging.Message

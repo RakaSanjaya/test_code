@@ -28,6 +28,10 @@ defmodule MessagingGatewayWeb.ConnCase do
       import Plug.Conn
       import Phoenix.ConnTest
       import MessagingGatewayWeb.ConnCase
+      import MessagingGatewayWeb.TestHelpers
+      import MessagingGateway.Fixtures
+
+      alias MessagingGateway.Repo
     end
   end
 

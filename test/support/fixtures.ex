@@ -15,6 +15,18 @@ defmodule MessagingGateway.Fixtures do
     |> Repo.insert!()
   end
 
+  @doc "Creates an API key through the real Accounts API; returns `{api_key, plaintext_secret}`."
+  def api_key_fixture(
+        %Tenant{} = tenant,
+        scopes \\ ["messages:write", "messages:read"],
+        attrs \\ %{}
+      ) do
+    {:ok, key, secret} =
+      MessagingGateway.Accounts.create_api_key(tenant, Map.put(attrs, :scopes, scopes))
+
+    {key, secret}
+  end
+
   def channel_fixture(%Tenant{} = tenant, attrs \\ %{}) do
     defaults = %{
       tenant_id: tenant.id,
