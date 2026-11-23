@@ -105,6 +105,8 @@ defmodule MessagingGatewayWeb.WebhookControllerTest do
           dlr(m.id, "queued"),
           dlr("not-a-uuid", "sent"),
           dlr(m.id, "failed", %{"reason" => String.duplicate("r", 256)}),
+          dlr(m.id, "failed", %{"reason" => String.duplicate("é", 200)}),
+          dlr(m.id, "failed", %{"reason" => "a\u0000b"}),
           "[1, 2]"
         ] do
       assert %{"error" => %{"code" => "validation_failed"}} =

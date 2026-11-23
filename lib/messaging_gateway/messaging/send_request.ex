@@ -45,6 +45,7 @@ defmodule MessagingGateway.Messaging.SendRequest do
       message: "must be E.164, e.g. +6281234567890"
     )
     |> validate_length(:text, min: 1, max: @max_text_length)
+    |> validate_change(:text, &reject_nul/2)
     |> validate_format(:template_code, @template_code_format)
     |> validate_change(:metadata, &validate_metadata/2)
     |> apply_action(:validate)
@@ -104,12 +105,18 @@ defmodule MessagingGateway.Messaging.SendRequest do
   end
 
   defp valid_metadata_entry?({key, value}) do
-    is_binary(key) and String.length(key) in 1..@max_metadata_key_length and
+    is_binary(key) and String.length(key) in 1..@max_metadata_key_length and not nul?(key) and
       valid_metadata_value?(value)
   end
 
   defp valid_metadata_value?(value) when is_binary(value),
-    do: String.length(value) <= @max_metadata_value_length
+    do: String.length(value) <= @max_metadata_value_length and not nul?(value)
 
   defp valid_metadata_value?(value), do: is_number(value) or is_boolean(value) or is_nil(value)
+
+  # PostgreSQL text and jsonb cannot store U+0000; reject it here instead of crashing in the DB.
+  defp reject_nul(field, value),
+    do: if(nul?(value), do: [{field, "must not contain NUL"}], else: [])
+
+  defp nul?(value), do: String.contains?(value, <<0>>)
 end

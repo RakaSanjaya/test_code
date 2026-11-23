@@ -186,6 +186,21 @@ defmodule MessagingGatewayWeb.MessageControllerTest do
     end
   end
 
+  test "NUL characters are a 422, not a database exception", %{a_full: {k, s}, ch_a: ch, a: a} do
+    base = %{"channel_id" => ch.id, "recipient" => "+6281234567890", "text" => "x"}
+
+    for body <- [
+          %{base | "text" => "a\u0000b"},
+          Map.put(base, "metadata", %{"k" => "a\u0000"}),
+          Map.put(base, "metadata", %{"k\u0000" => 1})
+        ] do
+      conn = build_conn() |> put_api_auth(k.client_key, s) |> post_json("/api/v1/messages", body)
+      assert %{"error" => %{"code" => "validation_failed"}} = json_response(conn, 422)
+    end
+
+    assert Repo.get!(Tenant, a.id).balance == 10_000
+  end
+
   test "GET returns own message; foreign, missing and malformed ids are an identical 404", ctx do
     {k, s} = ctx.a_full
 

@@ -105,6 +105,13 @@ defmodule MessagingGateway.Messaging.SendRequestTest do
     assert {:ok, _} = SendRequest.validate(%{@valid | "text" => String.duplicate("😀", 4096)})
   end
 
+  # PostgreSQL rejects NUL in text and jsonb; it must be a 422, never a DB exception.
+  test "NUL characters are rejected in text and metadata" do
+    assert :text in error_fields(%{@valid | "text" => "a\u0000b"})
+    assert :metadata in error_fields(%{@valid | "metadata" => %{"k" => "a\u0000"}})
+    assert :metadata in error_fields(%{@valid | "metadata" => %{"k\u0000" => 1}})
+  end
+
   test "channel_id must be a UUID" do
     for c <- ["not-a-uuid", 123, nil],
         do: assert(:channel_id in error_fields(%{@valid | "channel_id" => c}))

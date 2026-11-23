@@ -20,7 +20,11 @@ defmodule MessagingGateway.Webhooks.DeliveryReport do
     |> cast(params, [:message_id, :status, :reason])
     |> validate_required([:message_id, :status])
     |> validate_inclusion(:status, StatusMachine.vendor_statuses())
-    |> validate_length(:reason, max: 255)
+    # Counted in codepoints to match the varchar(255) column (graphemes can be longer).
+    |> validate_length(:reason, max: 255, count: :codepoints)
+    |> validate_change(:reason, fn :reason, reason ->
+      if String.contains?(reason, <<0>>), do: [reason: "must not contain NUL"], else: []
+    end)
     |> apply_action(:validate)
     |> case do
       {:ok, report} -> {:ok, Map.take(report, [:message_id, :status, :reason])}
