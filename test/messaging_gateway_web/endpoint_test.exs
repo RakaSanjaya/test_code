@@ -12,6 +12,13 @@ defmodule MessagingGatewayWeb.EndpointTest do
            }
   end
 
+  test "every response, including unrouted ones, carries no-store and nosniff", %{conn: conn} do
+    for conn <- [get(conn, "/api/v1/nope"), get(build_conn(), "/api/v1/messages/x")] do
+      assert get_resp_header(conn, "cache-control") == ["no-store"]
+      assert get_resp_header(conn, "x-content-type-options") == ["nosniff"]
+    end
+  end
+
   test "malformed JSON is 400, not 500", %{conn: conn} do
     assert_error_sent 400, fn -> conn |> json() |> post("/api/v1/messages", "{bad") end
   end

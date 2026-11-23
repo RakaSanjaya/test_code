@@ -178,5 +178,6 @@ Tiga context:
 - **Validasi input ketat:** recipient wajib E.164 (`+62…`), metadata flat (≤ 20 key, value skalar ≤ 500 karakter), `text` ≤ 4096 karakter.
 - **Rate limit per node** (ETS). Multi-node butuh store bersama (Redis / Hammer backend terdistribusi).
 - **Body di-parse sebelum auth / sebelum verifikasi signature.** Dibatasi 64 KB dan tidak ada state yang berubah sebelum verifikasi; verifikasi tetap dilakukan atas raw bytes.
+- **`debug_errors` dimatikan di dev**, jadi error tetap memakai envelope JSON. Halaman debug HTML Phoenix akan menampilkan ulang header request (termasuk `Authorization`) di response.
 - **Query log Ecto dimatikan juga di dev**, karena parameter query memuat isi pesan dan recipient. Nyalakan sementara (`log: :debug` di `config/dev.exs`) hanya untuk debugging lokal.
 - **Belum dikerjakan:** kedaluwarsa idempotency key; ledger append-only baru dijaga konvensi (berikutnya: `REVOKE UPDATE, DELETE` untuk role aplikasi); enkripsi isi pesan at-rest; rotasi webhook secret (multi-secret verify); mock vendor tidak memanggil webhook sendiri (DLR disimulasikan lewat curl).

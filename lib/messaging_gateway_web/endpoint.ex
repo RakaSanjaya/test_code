@@ -8,6 +8,7 @@ defmodule MessagingGatewayWeb.Endpoint do
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :messaging_gateway
   end
 
+  plug MessagingGatewayWeb.Plugs.ApiHeaders
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 

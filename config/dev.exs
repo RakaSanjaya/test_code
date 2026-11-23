@@ -26,7 +26,9 @@ config :messaging_gateway, MessagingGatewayWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}],
   check_origin: false,
   code_reloader: true,
-  debug_errors: true,
+  # API-only: keep the JSON error envelope in dev too. The HTML debug page would echo
+  # request headers (incl. Authorization) back in the response.
+  debug_errors: false,
   secret_key_base: "d5PbL0xctoX5H5okXkxVi7YFmVqj0PyZuOn/81zXn566ny71uUatxMkU8sQfAx4/",
   watchers: []
 
